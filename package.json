@@ -1,0 +1,14 @@
+{
+  "name": "@jsp114/gdv",
+  "main": "a9293460623f117b@18.js",
+  "version": "18.0.0",
+  "homepage": "https://observablehq.com/@jsp114/gdv",
+  "author": {
+    "name": "JSP",
+    "url": "https://observablehq.com/@jsp114"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}
