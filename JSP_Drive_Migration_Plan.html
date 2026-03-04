@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSP Drive Reorganization Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ec;
+    --cream: #ede9e0;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --red: #c94c4c;
+    --green: #4cad78;
+    --blue: #4c7ec9;
+    --purple: #8a4cc9;
+    --orange: #c97a4c;
+    --mid: #2a2a2a;
+    --border: rgba(201,168,76,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* NAV TABS */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--black);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+  }
+  .nav-tab {
+    padding: 16px 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    color: rgba(245,242,236,0.45);
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .nav-tab:hover { color: var(--gold); }
+  .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 48px 40px; max-width: 1200px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, var(--black) 0%, var(--mid) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 48px;
+    text-align: center;
+  }
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    color: rgba(245,242,236,0.6);
+    max-width: 540px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  /* PHASE CARDS */
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2px;
+    margin-bottom: 48px;
+    background: var(--border);
+  }
+  .phase-card {
+    background: var(--mid);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .phase-card.p1::before { background: var(--blue); }
+  .phase-card.p2::before { background: var(--gold); }
+  .phase-card.p3::before { background: var(--purple); }
+  .phase-card.p4::before { background: var(--green); }
+  .phase-card.p5::before { background: var(--orange); }
+
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 1;
+    opacity: 0.08;
+    position: absolute;
+    top: 16px; right: 20px;
+    color: var(--white);
+  }
+  .phase-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .p1 .phase-tag { color: var(--blue); }
+  .p2 .phase-tag { color: var(--gold); }
+  .p3 .phase-tag { color: var(--purple); }
+  .p4 .phase-tag { color: var(--green); }
+  .p5 .phase-tag { color: var(--orange); }
+
+  .phase-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .phase-timeline {
+    font-size: 12px;
+    color: rgba(245,242,236,0.4);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 16px;
+  }
+  .phase-desc {
+    font-size: 13px;
+    color: rgba(245,242,236,0.7);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .phase-steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .phase-steps li {
+    font-size: 13px;
+    padding-left: 20px;
+    position: relative;
+    color: rgba(245,242,236,0.8);
+  }
+  .phase-steps li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 11px;
+  }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .section-subtitle {
+    color: rgba(245,242,236,0.45);
+    font-size: 13px;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  /* CHECKLIST */
+  .checklist-group { margin-bottom: 36px; }
+  .checklist-group-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .phase-badge {
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+  .badge-blue { background: rgba(76,126,201,0.2); color: var(--blue); }
+  .badge-gold { background: rgba(201,168,76,0.2); color: var(--gold); }
+  .badge-purple { background: rgba(138,76,201,0.2); color: var(--purple); }
+  .badge-green { background: rgba(76,173,120,0.2); color: var(--green); }
+  .badge-orange { background: rgba(201,122,76,0.2); color: var(--orange); }
+
+  .checklist-items { display: flex; flex-direction: column; gap: 4px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+  }
+  .check-item:hover { background: rgba(255,255,255,0.03); border-color: var(--border); }
+  .check-item.done { opacity: 0.45; }
+  .check-item.done .check-text { text-decoration: line-through; }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(245,242,236,0.2);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .check-item.done .checkbox {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .checkbox svg { display: none; }
+  .check-item.done .checkbox svg { display: block; }
+
+  .check-text { font-size: 13.5px; color: rgba(245,242,236,0.85); }
+  .check-note { font-size: 11.5px; color: rgba(245,242,236,0.4); margin-top: 2px; font-style: italic; }
+
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    height: 6px;
+    margin: 24px 0 40px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--green));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(245,242,236,0.4);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* MAP / TREE */
+  .map-wrap {
+    overflow-x: auto;
+    padding-bottom: 16px;
+  }
+  .tree {
+    display: flex;
+    gap: 3px;
+    min-width: 900px;
+  }
+  .tree-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .tree-col-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,242,236,0.4);
+    padding: 8px 12px;
+    text-align: center;
+  }
+
+  .node {
+    background: var(--mid);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 12px;
+    border-left: 3px solid transparent;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .node:hover { background: rgba(255,255,255,0.07); }
+  .node.root {
+    border-left-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    text-align: center;
+    padding: 20px;
+  }
+  .node.l1-events { border-left-color: var(--blue); }
+  .node.l1-ops { border-left-color: var(--purple); }
+  .node.l1-talent { border-left-color: var(--green); }
+  .node.l1-biz { border-left-color: var(--orange); }
+  .node.l1-archive { border-left-color: rgba(245,242,236,0.2); }
+
+  .node-label {
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 3px;
+  }
+  .node-sub {
+    font-size: 11px;
+    color: rgba(245,242,236,0.4);
+    line-height: 1.4;
+  }
+  .node-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-top: 5px;
+  }
+
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(201,168,76,0.3);
+    font-size: 20px;
+    padding: 4px 0;
+  }
+
+  /* PROBLEMS LIST */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .problem-card {
+    background: var(--mid);
+    border-radius: 6px;
+    padding: 20px 22px;
+    border-left: 3px solid var(--red);
+  }
+  .solution-card {
+    background: var(--mid);
+    border-radius: 6px;
+    padding: 20px 22px;
+    border-left: 3px solid var(--green);
+  }
+  .card-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .problem-card .card-header { color: var(--red); }
+  .solution-card .card-header { color: var(--green); }
+  .card-items { display: flex; flex-direction: column; gap: 6px; }
+  .card-items li {
+    font-size: 12.5px;
+    color: rgba(245,242,236,0.75);
+    padding-left: 14px;
+    position: relative;
+  }
+  .card-items li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: rgba(245,242,236,0.3);
+  }
+
+  /* NAMING CONVENTION */
+  .naming-example {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .naming-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .naming-formula {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .naming-formula span { color: var(--gold); }
+  .naming-breakdown {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .naming-part {
+    font-size: 11.5px;
+    color: rgba(245,242,236,0.6);
+  }
+  .naming-part strong { color: var(--gold-light); }
+
+  @media (max-width: 700px) {
+    .nav { padding: 0 16px; }
+    .section { padding: 32px 16px; }
+    .hero { padding: 40px 16px 32px; }
+    .problem-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Jay Siegan Presents · Internal Operations</div>
+  <h1>Drive <span>Reorg</span><br>Master Plan</h1>
+  <p>A phased migration strategy to bring structure, searchability, and sanity to JSP's Google Drive.</p>
+</div>
+
+<nav class="nav">
+  <div class="nav-tab active" onclick="showTab('plan')">📋 Plan</div>
+  <div class="nav-tab" onclick="showTab('map')">🗺 Visual Map</div>
+  <div class="nav-tab" onclick="showTab('checklist')">✅ Checklist</div>
+  <div class="nav-tab" onclick="showTab('naming')">🏷 Naming</div>
+</nav>
+
+<!-- ======================== PLAN ======================== -->
+<div class="section active" id="tab-plan">
+  <div class="section-title">Phased Migration Plan</div>
+  <div class="section-subtitle">5 phases · Estimated 6–8 weeks total · Can be executed incrementally</div>
+
+  <div style="margin-bottom:28px;">
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="card-header">⚠ Current Problems</div>
+        <ul class="card-items">
+          <li>Advances scattered in flat monthly folders with no event context</li>
+          <li>Duplicate files named "(1)", "(2)" throughout (especially Advances)</li>
+          <li>Loose files at the root of JSP Master Shared Drive</li>
+          <li>IT, HR, Finance mixed with creative & event content</li>
+          <li>_BANDS_CORE lives orphaned with no parallel structure for IVC/Keynote talent</li>
+          <li>Archive events from 2017–2021 mixed with active 2025–2026 events</li>
+          <li>Inconsistent naming: some use full names, some codes, some both</li>
+          <li>Pitch decks have no version or client context in filename</li>
+        </ul>
+      </div>
+      <div class="solution-card">
+        <div class="card-header">✓ After Reorg</div>
+        <ul class="card-items">
+          <li>Every event folder is self-contained: contracts, advance, P&L, talent, marketing</li>
+          <li>Single Advances folder per event — no dupes, clear versioning</li>
+          <li>Talent hub with consistent subfolders per artist (bio, contracts, tech rider, media)</li>
+          <li>Ops, Finance, HR, IT each in their own top-level silos</li>
+          <li>Archive clearly separated so active work is never cluttered</li>
+          <li>Naming convention applied consistently across all files</li>
+          <li>Shared Drive root has zero loose files</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-grid">
+
+    <div class="phase-card p1">
+      <div class="phase-num">1</div>
+      <div class="phase-tag">Phase 1 · Week 1</div>
+      <h3>Audit & Freeze</h3>
+      <div class="phase-timeline">Days 1–5 · Low risk · No files moved</div>
+      <div class="phase-desc">Before touching anything, get a full picture of what exists. This phase is observation only — nothing is deleted or moved.</div>
+      <ul class="phase-steps">
+        <li>Export gdrive.json and build a full inventory spreadsheet (file count per folder)</li>
+        <li>Flag all duplicate files (search for "(1)", "(2)" in names)</li>
+        <li>Identify the 20 most-used folders via Drive activity</li>
+        <li>Document all current top-level folders and their purpose</li>
+        <li>Communicate freeze period to team — no new folders created</li>
+        <li>Get team alignment on proposed new structure before any moves</li>
+      </ul>
+    </div>
+
+    <div class="phase-card p2">
+      <div class="phase-num">2</div>
+      <div class="phase-tag">Phase 2 · Week 2</div>
+      <h3>Build New Skeleton</h3>
+      <div class="phase-timeline">Days 6–10 · Zero risk · Structure only</div>
+      <div class="phase-desc">Create the new folder structure without moving any existing files. Test it feels right before committing.</div>
+      <ul class="phase-steps">
+        <li>Create top-level folders: 📁 EVENTS, 📁 TALENT, 📁 OPERATIONS, 📁 BUSINESS DEV, 📁 ARCHIVE</li>
+        <li>Build EVENTS → by Year → by Month substructure</li>
+        <li>Create TALENT hub with one test artist subfolder as a template</li>
+        <li>Create OPERATIONS subfolders: Finance, HR, IT, Legal, Playbooks</li>
+        <li>Create BUSINESS DEV subfolders: Proposals, RFPs, Pitches, Marketing</li>
+        <li>Share skeleton with team for feedback before migration begins</li>
+      </ul>
+    </div>
+
+    <div class="phase-card p3">
+      <div class="phase-num">3</div>
+      <div class="phase-tag">Phase 3 · Weeks 3–4</div>
+      <h3>Migrate Active Events</h3>
+      <div class="phase-timeline">2025–2026 events only · Highest priority</div>
+      <div class="phase-desc">Move all current and upcoming events into the new structure. This is the highest-impact phase — start here to feel the benefit immediately.</div>
+      <ul class="phase-steps">
+        <li>Move 2026 event folders into EVENTS → 2026 → [Month]</li>
+        <li>Move 2025 event folders into EVENTS → 2025 → [Month]</li>
+        <li>Within each event folder: standardize subfolders to: Client, Talent, Advance, P&L, Marketing, Venue</li>
+        <li>Move loose Advance docs (currently in flat monthly folders) into their correct event folder</li>
+        <li>Delete confirmed duplicate Advance files after verifying final version</li>
+        <li>Move all FEC / SNG Shared Drive content into TALENT hub</li>
+      </ul>
+    </div>
+
+    <div class="phase-card p4">
+      <div class="phase-num">4</div>
+      <div class="phase-tag">Phase 4 · Week 5</div>
+      <h3>Migrate Ops & Talent</h3>
+      <div class="phase-timeline">Internal infrastructure reorganization</div>
+      <div class="phase-desc">Consolidate all operational, HR, finance, and talent roster content into the new silos.</div>
+      <ul class="phase-steps">
+        <li>Move Finance Meeting notes into OPERATIONS → Finance → by Year</li>
+        <li>Move HR folder content into OPERATIONS → HR</li>
+        <li>Move IT files (Airtable, Copper, Domains, Tech Stack) into OPERATIONS → IT</li>
+        <li>Move Playbook and Process Docs into OPERATIONS → Playbooks</li>
+        <li>Move _BANDS_CORE into TALENT → Core Bands</li>
+        <li>Move IVC Strategy folder into TALENT → Keynote Speakers</li>
+        <li>Move Philanthropy docs into OPERATIONS → Philanthropy</li>
+        <li>Move Staff Meeting notes into OPERATIONS → Internal Meetings</li>
+      </ul>
+    </div>
+
+    <div class="phase-card p5">
+      <div class="phase-num">5</div>
+      <div class="phase-tag">Phase 5 · Weeks 6–8</div>
+      <h3>Archive & Polish</h3>
+      <div class="phase-timeline">Historical events · Cleanup · Documentation</div>
+      <div class="phase-desc">Move historical events to archive, clean up the root, apply naming conventions, and document the new system for the team.</div>
+      <ul class="phase-steps">
+        <li>Move all pre-2024 event folders into ARCHIVE → [Year]</li>
+        <li>Move Armed Forces Entertainment tour docs into ARCHIVE → 2017</li>
+        <li>Clean root of JSP Master Shared Drive — zero loose files should remain</li>
+        <li>Apply naming convention audit to all 2025–2026 event files</li>
+        <li>Write Drive SOP doc (where things live, naming rules, how to create new event folders)</li>
+        <li>Train team on new structure via Loom or staff meeting walkthrough</li>
+        <li>Set up quarterly Drive audit reminder to prevent re-accumulation of clutter</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================== MAP ======================== -->
+<div class="section" id="tab-map">
+  <div class="section-title">Visual Structure Map</div>
+  <div class="section-subtitle">Proposed top-level architecture for JSP Master Shared Drive</div>
+
+  <div class="map-wrap">
+    <div style="display:flex; flex-direction:column; gap:3px; max-width:1100px;">
+
+      <!-- Root -->
+      <div style="text-align:center; margin-bottom:8px;">
+        <div class="node root" style="max-width:360px; margin:0 auto;">
+          📁 JSP Master Shared Drive
+          <div class="node-sub" style="font-family:'DM Sans',sans-serif; font-size:12px; font-weight:300; margin-top:6px; opacity:0.6;">Zero loose files at root</div>
+        </div>
+      </div>
+
+      <div class="connector">│</div>
+
+      <!-- Level 1 -->
+      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:3px; margin-bottom:4px;">
+        <div class="node l1-events">
+          <div class="node-label">📅 EVENTS</div>
+          <div class="node-sub">All bookings by year & month</div>
+          <span class="node-tag badge-blue">Primary</span>
+        </div>
+        <div class="node l1-talent">
+          <div class="node-label">🎤 TALENT</div>
+          <div class="node-sub">Roster, riders, media, contracts</div>
+          <span class="node-tag badge-green">Roster</span>
+        </div>
+        <div class="node l1-ops">
+          <div class="node-label">⚙️ OPERATIONS</div>
+          <div class="node-sub">Finance, HR, IT, legal, playbooks</div>
+          <span class="node-tag badge-purple">Internal</span>
+        </div>
+        <div class="node l1-biz">
+          <div class="node-label">💼 BUSINESS DEV</div>
+          <div class="node-sub">Proposals, pitches, RFPs, marketing</div>
+          <span class="node-tag badge-orange">Growth</span>
+        </div>
+        <div class="node l1-archive">
+          <div class="node-label">🗄 ARCHIVE</div>
+          <div class="node-sub">All pre-2024 events & docs</div>
+          <span class="node-tag" style="background:rgba(245,242,236,0.06); color:rgba(245,242,236,0.4);">Historical</span>
+        </div>
+      </div>
+
+      <!-- Level 2 detail rows -->
+      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:3px; margin-bottom:4px;">
+
+        <!-- EVENTS L2 -->
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <div class="node" style="border-left-color:var(--blue);">
+            <div class="node-label" style="font-size:11px;">📁 2026</div>
+            <div class="node-sub">01-Jan through 12-Dec</div>
+          </div>
+          <div class="node" style="border-left-color:var(--blue);">
+            <div class="node-label" style="font-size:11px;">📁 2025</div>
+            <div class="node-sub">01-Jan through 12-Dec</div>
+          </div>
+          <div class="node" style="border-left-color:var(--blue); opacity:0.5;">
+            <div class="node-label" style="font-size:11px;">📁 2024 → Archive</div>
+          </div>
+        </div>
+
+        <!-- TALENT L2 -->
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <div class="node" style="border-left-color:var(--green);">
+            <div class="node-label" style="font-size:11px;">📁 Core Bands</div>
+            <div class="node-sub">WB5, Pop Rocks, Notorious, Bell & Co, etc.</div>
+          </div>
+          <div class="node" style="border-left-color:var(--green);">
+            <div class="node-label" style="font-size:11px;">📁 DJ Talent</div>
+            <div class="node-sub">DJ Jazzy Jeff, DJ Cams, deadmau5</div>
+          </div>
+          <div class="node" style="border-left-color:var(--green);">
+            <div class="node-label" style="font-size:11px;">📁 Keynote Speakers</div>
+            <div class="node-sub">IVC roster, bios, intake briefs</div>
+          </div>
+          <div class="node" style="border-left-color:var(--green);">
+            <div class="node-label" style="font-size:11px;">📁 Comedy / FEC</div>
+            <div class="node-sub">SNG, Lace Larrabee, Kristen Key</div>
+          </div>
+          <div class="node" style="border-left-color:var(--green);">
+            <div class="node-label" style="font-size:11px;">📁 Legacy Artists</div>
+            <div class="node-sub">Sheryl Crow, Ne-Yo, Stephan Jenkins</div>
+          </div>
+        </div>
+
+        <!-- OPS L2 -->
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <div class="node" style="border-left-color:var(--purple);">
+            <div class="node-label" style="font-size:11px;">📁 Finance</div>
+            <div class="node-sub">P&L meetings by year, bank info</div>
+          </div>
+          <div class="node" style="border-left-color:var(--purple);">
+            <div class="node-label" style="font-size:11px;">📁 HR</div>
+            <div class="node-sub">Reviews, onboarding, holidays</div>
+          </div>
+          <div class="node" style="border-left-color:var(--purple);">
+            <div class="node-label" style="font-size:11px;">📁 IT</div>
+            <div class="node-sub">Tech stack, Copper, Airtable, domains</div>
+          </div>
+          <div class="node" style="border-left-color:var(--purple);">
+            <div class="node-label" style="font-size:11px;">📁 Playbooks</div>
+            <div class="node-sub">SOPs, templates, process docs</div>
+          </div>
+          <div class="node" style="border-left-color:var(--purple);">
+            <div class="node-label" style="font-size:11px;">📁 Internal Meetings</div>
+            <div class="node-sub">Staff meetings, huddles by year</div>
+          </div>
+        </div>
+
+        <!-- BIZ DEV L2 -->
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <div class="node" style="border-left-color:var(--orange);">
+            <div class="node-label" style="font-size:11px;">📁 Proposals</div>
+            <div class="node-sub">Active RFPs & client proposals</div>
+          </div>
+          <div class="node" style="border-left-color:var(--orange);">
+            <div class="node-label" style="font-size:11px;">📁 Pitch Decks</div>
+            <div class="node-sub">Named by client + date</div>
+          </div>
+          <div class="node" style="border-left-color:var(--orange);">
+            <div class="node-label" style="font-size:11px;">📁 Marketing</div>
+            <div class="node-sub">Goals, SEO, social, EOY reports</div>
+          </div>
+          <div class="node" style="border-left-color:var(--orange);">
+            <div class="node-label" style="font-size:11px;">📁 Philanthropy</div>
+            <div class="node-sub">Fundraiser docs, outreach</div>
+          </div>
+        </div>
+
+        <!-- ARCHIVE L2 -->
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <div class="node" style="border-left-color:rgba(245,242,236,0.15); opacity:0.6;">
+            <div class="node-label" style="font-size:11px;">📁 2024</div>
+          </div>
+          <div class="node" style="border-left-color:rgba(245,242,236,0.15); opacity:0.5;">
+            <div class="node-label" style="font-size:11px;">📁 2023</div>
+          </div>
+          <div class="node" style="border-left-color:rgba(245,242,236,0.15); opacity:0.4;">
+            <div class="node-label" style="font-size:11px;">📁 2022</div>
+          </div>
+          <div class="node" style="border-left-color:rgba(245,242,236,0.15); opacity:0.3;">
+            <div class="node-label" style="font-size:11px;">📁 2021 & Earlier</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Event folder anatomy -->
+      <div style="margin-top:40px;">
+        <div class="section-title" style="font-size:28px; margin-bottom:6px;">Per-Event Folder Template</div>
+        <div class="section-subtitle">Every event folder should contain exactly these subfolders</div>
+
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:3px; max-width:800px;">
+          <div class="node" style="border-left-color:var(--gold); background:rgba(201,168,76,0.05);">
+            <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold); margin-bottom:8px;">PARENT FOLDER</div>
+            <div class="node-label" style="font-size:13px;">JSP010126 | Wonder Bread 5 | Client Name | Venue | City</div>
+          </div>
+          <div style="grid-column: span 2; display:grid; grid-template-columns:repeat(3,1fr); gap:3px;">
+            <div class="node" style="border-left-color:var(--blue);">
+              <div class="node-label" style="font-size:11px;">📁 Client</div>
+              <div class="node-sub">BAF, contract iterations, executed agreement</div>
+            </div>
+            <div class="node" style="border-left-color:var(--green);">
+              <div class="node-label" style="font-size:11px;">📁 Talent</div>
+              <div class="node-sub">Talent contract, rider, W-9, payments</div>
+            </div>
+            <div class="node" style="border-left-color:var(--purple);">
+              <div class="node-label" style="font-size:11px;">📁 Advance</div>
+              <div class="node-sub">Single advance doc (no dupes), venue info</div>
+            </div>
+            <div class="node" style="border-left-color:var(--orange);">
+              <div class="node-label" style="font-size:11px;">📁 Finance</div>
+              <div class="node-sub">P&L, payment confirmations, invoices</div>
+            </div>
+            <div class="node" style="border-left-color:var(--gold);">
+              <div class="node-label" style="font-size:11px;">📁 Marketing</div>
+              <div class="node-sub">Assets, social tiles, announcement plan</div>
+            </div>
+            <div class="node" style="border-left-color:rgba(245,242,236,0.2);">
+              <div class="node-label" style="font-size:11px;">📁 Venue</div>
+              <div class="node-sub">Floor plans, specs, maps, COI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ======================== CHECKLIST ======================== -->
+<div class="section" id="tab-checklist">
+  <div class="section-title">Migration Checklist</div>
+  <div class="section-subtitle">Click items to mark complete · Progress saves during this session</div>
+
+  <div class="progress-label">
+    <span>Overall Progress</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <div class="checklist-group">
+    <div class="checklist-group-title">
+      Phase 1: Audit & Freeze
+      <span class="phase-badge badge-blue">Week 1</span>
+    </div>
+    <div class="checklist-items">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create Drive inventory spreadsheet (folder names, file counts, last modified)</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Search Drive for "(1)" and "(2)" files — log all duplicates</div><div class="check-note">Focus especially on Advances folder and event folders</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Identify all loose files at the root of JSP Master Shared Drive</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Announce freeze period to team — no new top-level folders during migration</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Get team buy-in on new structure before any files are moved</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-group">
+    <div class="checklist-group-title">
+      Phase 2: Build Skeleton
+      <span class="phase-badge badge-gold">Week 2</span>
+    </div>
+    <div class="checklist-items">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create top-level folder: 📅 EVENTS</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create top-level folder: 🎤 TALENT</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create top-level folder: ⚙️ OPERATIONS</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create top-level folder: 💼 BUSINESS DEV</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create top-level folder: 🗄 ARCHIVE</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Build EVENTS → 2026 → 12 monthly subfolders (01-January format)</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Build EVENTS → 2025 → 12 monthly subfolders</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create TALENT subfolders: Core Bands, DJ Talent, Keynote Speakers, Comedy / FEC, Legacy Artists</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Create OPERATIONS subfolders: Finance, HR, IT, Legal, Playbooks, Internal Meetings, Philanthropy</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Build one complete sample event folder as a template for team review</div><div class="check-note">Use a recent completed event so nothing is disrupted</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-group">
+    <div class="checklist-group-title">
+      Phase 3: Migrate Active Events (2025–2026)
+      <span class="phase-badge badge-purple">Weeks 3–4</span>
+    </div>
+    <div class="checklist-items">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move all 2026 event folders into EVENTS → 2026 → correct month</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move all 2025 event folders into EVENTS → 2025 → correct month</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Standardize subfolders inside each event: Client / Talent / Advance / Finance / Marketing / Venue</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Migrate all loose Advance docs (from flat monthly folders) into their corresponding event's Advance subfolder</div><div class="check-note">Check: 2026 Advances, 2025 Advances — many are unconnected to event folders</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Delete confirmed duplicate Advance docs (the "(1)", "(2)", etc. versions) — keep only the final</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move FEC / SNG artist content (Lace Larrabee, Kristen Key, Kristin Toomey, etc.) into TALENT → Comedy / FEC</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move JSP Artist Crew Contact List, Letterhead Template, Lingo doc to OPERATIONS → Playbooks</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move deadmau5, DJ Jazzy Jeff, DJ Cams talent folders into TALENT → DJ Talent</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-group">
+    <div class="checklist-group-title">
+      Phase 4: Migrate Operations & Talent Hub
+      <span class="phase-badge badge-green">Week 5</span>
+    </div>
+    <div class="checklist-items">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move Finance Meeting notes (2022–2025) into OPERATIONS → Finance → by year</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move HR folder content into OPERATIONS → HR</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move IT folder (Airtable, Copper, Domains, Intranet, Pitches/RFPs) into OPERATIONS → IT and BUSINESS DEV as appropriate</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move Playbook and Process Docs into OPERATIONS → Playbooks</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move _BANDS_CORE into TALENT → Core Bands</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move IVC Strategy Folder into TALENT → Keynote Speakers</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move Philanthropy folder into OPERATIONS → Philanthropy</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move all JSP Huddle and Staff Meeting docs into OPERATIONS → Internal Meetings → by year</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move Marketing folder (Goals, EOY, SEO, 2026 Won) into BUSINESS DEV → Marketing</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move Music Licensing folder into TALENT (or OPERATIONS → Legal) — decide with team</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-group">
+    <div class="checklist-group-title">
+      Phase 5: Archive, Cleanup & Documentation
+      <span class="phase-badge badge-orange">Weeks 6–8</span>
+    </div>
+    <div class="checklist-items">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move all 2024 event folders to ARCHIVE → 2024</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move all 2023 event folders to ARCHIVE → 2023</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Move all 2022 and earlier events (including AFE tours, Armed Forces) to ARCHIVE → 2022 / 2017</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Verify JSP Master Shared Drive root has zero loose files remaining</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Run naming convention audit on all 2025–2026 event files and rename non-conforming files</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Write Drive SOP document — where things live, naming rules, how to set up new event folders</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Train the team via Loom video walkthrough or staff meeting</div></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="checkbox"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="check-text">Set a recurring quarterly Drive audit calendar reminder to prevent future clutter accumulation</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======================== NAMING ======================== -->
+<div class="section" id="tab-naming">
+  <div class="section-title">Naming Convention Guide</div>
+  <div class="section-subtitle">Consistent naming = searchability · Apply to all active files going forward</div>
+
+  <div class="naming-example">
+    <div class="naming-label">📁 Event Folder Name</div>
+    <div class="naming-formula"><span>[CODE]</span> | <span>[Artist/Talent]</span> | <span>[Client/Event Name]</span> | <span>[Venue]</span> | <span>[City]</span></div>
+    <div class="naming-breakdown">
+      <div class="naming-part">✅ <strong>JSP100825</strong> | Colin Jost & Michael Che | Predict | Recorded Future | NYC</div>
+    </div>
+    <div class="naming-breakdown" style="margin-top:8px;">
+      <div class="naming-part"><strong>[CODE]</strong> = Band abbreviation + MMDDYY (e.g., WB5, JSP, POP, NOT, TCB, BBX)</div>
+      <div class="naming-part" style="margin-top:4px;"><strong>Pipe separators</strong> keep folder names scannable across all screen sizes</div>
+    </div>
+  </div>
+
+  <div class="naming-example">
+    <div class="naming-label">📄 File Naming: Contracts</div>
+    <div class="naming-formula"><span>[Type]</span> (<span>[Party]</span>) - <span>[CODE]</span> - <span>[Artist]</span> - <span>[City]</span></div>
+    <div class="naming-breakdown">
+      <div class="naming-part">✅ <strong>Executed Agreement (Client)</strong> - JSP100825 - Colin Jost - NYC.pdf</div>
+      <div class="naming-part">✅ <strong>Contract Agreement (Talent)</strong> - WB5091325 - Wonder Bread 5 - Austin.gdoc</div>
+    </div>
+  </div>
+
+  <div class="naming-example">
+    <div class="naming-label">📄 File Naming: Advances</div>
+    <div class="naming-formula"><span>[CODE]</span> - ADVANCE - <span>[Artist]</span> (FINAL)</div>
+    <div class="naming-breakdown">
+      <div class="naming-part">✅ <strong>WB5091325 - ADVANCE - Wonder Bread 5 (FINAL).gdoc</strong></div>
+      <div class="naming-part">❌ WB5091325 - ADVANCE (1).gdoc · WB5091325 - ADVANCE (2).gdoc</div>
+    </div>
+    <div class="naming-breakdown" style="margin-top:8px;">
+      <div class="naming-part"><strong>Rule:</strong> Only ONE advance doc per event. Use Google Doc version history for revisions — no duplicate files.</div>
+    </div>
+  </div>
+
+  <div class="naming-example">
+    <div class="naming-label">📄 File Naming: P&L</div>
+    <div class="naming-formula"><span>[CODE]</span> - PRV - <span>[City]</span><span>[Artist]</span> Profit and Loss</div>
+    <div class="naming-breakdown">
+      <div class="naming-part">✅ <strong>JSP100825-PRV-NYCColinJostMichaelChe Profit and Loss.pdf</strong></div>
+    </div>
+  </div>
+
+  <div class="naming-example">
+    <div class="naming-label">📁 Talent Artist Subfolder (in TALENT hub)</div>
+    <div class="naming-formula"><span>[ARTIST NAME]</span> (all caps, consistent)</div>
+    <div class="naming-breakdown">
+      <div class="naming-part">✅ <strong>WONDER BREAD 5</strong> / <strong>DJ JAZZY JEFF</strong> / <strong>LACE LARRABEE</strong></div>
+    </div>
+    <div style="margin-top:16px; font-family:'DM Mono',monospace; font-size:11px; color:rgba(245,242,236,0.5);">SUBFOLDERS INSIDE EACH ARTIST:</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px;">
+      <div class="node" style="border-left-color:var(--green); padding:10px 12px;">
+        <div class="node-label" style="font-size:11px;">📁 Contracts</div>
+        <div class="node-sub">All talent agreements</div>
+      </div>
+      <div class="node" style="border-left-color:var(--blue); padding:10px 12px;">
+        <div class="node-label" style="font-size:11px;">📁 Tech Rider</div>
+        <div class="node-sub">Input list, stage plot</div>
+      </div>
+      <div class="node" style="border-left-color:var(--purple); padding:10px 12px;">
+        <div class="node-label" style="font-size:11px;">📁 Media</div>
+        <div class="node-sub">Photos, logos, EPK</div>
+      </div>
+      <div class="node" style="border-left-color:var(--orange); padding:10px 12px;">
+        <div class="node-label" style="font-size:11px;">📁 Financial</div>
+        <div class="node-sub">W-9, invoices, payments</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgba(201,76,76,0.07); border:1px solid rgba(201,76,76,0.25); border-radius:6px; padding:20px 24px; margin-top:8px;">
+    <div style="font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.12em; color:var(--red); margin-bottom:12px;">⚠ THINGS TO STOP DOING</div>
+    <ul class="card-items">
+      <li>Saving duplicate Advance files as "(1)", "(2)" — use version history instead</li>
+      <li>Storing files at the root of the Shared Drive</li>
+      <li>Creating event folders without the standard 6-subfolder structure</li>
+      <li>Naming Pitch Decks "Pitch.gslides" or "Pitch (3).gslides" — include client name and year</li>
+      <li>Mixing archived events with active events in the same folder</li>
+      <li>Creating personal/individual folders inside the shared drive (use My Drive for personal notes)</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('done');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const all = document.querySelectorAll('.check-item');
+    const done = document.querySelectorAll('.check-item.done');
+    const pct = Math.round((done.length / all.length) * 100);
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+</script>
+
+</body>
+</html>
